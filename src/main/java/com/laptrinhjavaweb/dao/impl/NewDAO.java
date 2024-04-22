@@ -11,8 +11,6 @@ import com.laptrinhjavaweb.model.NewModel;
 import com.laptrinhjavaweb.paging.Pageble;
 
 public class NewDAO extends AbstractDAO<NewModel> implements INewDAO {
-
-
 	
 	@Override
 	public List<NewModel> findByCategoryId(Long CategoryId) {

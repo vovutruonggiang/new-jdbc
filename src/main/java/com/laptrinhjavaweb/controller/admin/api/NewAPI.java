@@ -3,7 +3,6 @@ package com.laptrinhjavaweb.controller.admin.api;
 import java.io.IOException;
 
 import javax.inject.Inject;
-import javax.jws.WebService;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -12,8 +11,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.laptrinhjavaweb.model.NewModel;
+import com.laptrinhjavaweb.model.UserModel;
 import com.laptrinhjavaweb.service.INewService;
 import com.laptrinhjavaweb.utils.HttpUtil;
+import com.laptrinhjavaweb.utils.SessionUtil;
 
 
 @WebServlet(urlPatterns = {"/api-amdin-new"})
@@ -29,6 +30,7 @@ public class NewAPI extends HttpServlet{
 		req.setCharacterEncoding("UTF-8");
 		resp.setContentType("application/json");
 		NewModel newModel =  HttpUtil.of(req.getReader()).toModel(NewModel.class);
+		newModel.setCreatedBy(((UserModel) SessionUtil.getInstance().getValue(req, "USERMODEL")).getUserName());
 		newModel = newService.save(newModel);
 		mapper.writeValue(resp.getOutputStream(), newModel);
 	}
@@ -39,6 +41,7 @@ public class NewAPI extends HttpServlet{
 		req.setCharacterEncoding("UTF-8");
 		resp.setContentType("application/json");
 		NewModel updateNew =  HttpUtil.of(req.getReader()).toModel(NewModel.class);
+		updateNew.setModifiedBy(((UserModel) SessionUtil.getInstance().getValue(req, "USERMODEL")).getUserName());
 		updateNew = newService.update(updateNew);
 		mapper.writeValue(resp.getOutputStream(), updateNew);
 	}

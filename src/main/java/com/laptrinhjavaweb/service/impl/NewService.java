@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import com.laptrinhjavaweb.dao.ICategoryDAO;
 import com.laptrinhjavaweb.dao.INewDAO;
+import com.laptrinhjavaweb.dao.impl.CategoryDAO;
 import com.laptrinhjavaweb.model.CategoryModel;
 import com.laptrinhjavaweb.model.NewModel;
 import com.laptrinhjavaweb.paging.Pageble;
@@ -27,7 +28,8 @@ public class NewService implements INewService{
 	@Override
 	public NewModel save(NewModel newModel) {
 		newModel.setCreatedDate(new Timestamp(System.currentTimeMillis()));
-		newModel.setCreatedBy("");
+		CategoryModel category = categoryDAO.findOneByCode(newModel.getCategoryCode());
+		newModel.setCategoryId(category.getId());
 		Long newId = newDAO.save(newModel);
 		return newDAO.findOne(newId);
 	}
@@ -38,7 +40,8 @@ public class NewService implements INewService{
 		updateNew.setCreatedDate(oldNew.getCreatedDate());
 		updateNew.setCreatedBy(oldNew.getCreatedBy());
 		updateNew.setModifiedDate(new Timestamp(System.currentTimeMillis()));
-		updateNew.setModifiedBy("");
+		CategoryModel category = categoryDAO.findOneByCode(updateNew.getCategoryCode());
+		updateNew.setCategoryId(category.getId());
 		newDAO.update(updateNew);
 		return newDAO.findOne(updateNew.getId());
 	}
@@ -59,5 +62,12 @@ public class NewService implements INewService{
 	public int getTotalItem() {
 		return newDAO.getTotalItem();
 	}
-	
+
+	@Override
+	public NewModel findOne(long id) {
+		NewModel newModel = newDAO.findOne(id);
+		CategoryModel categoryModel = categoryDAO.findOne(newModel.getCategoryId());
+		newModel.setCategoryCode(categoryModel.getCode());
+		return newModel;
+	}
 }
